@@ -7,16 +7,16 @@ const path = require('path');
 const app = express();
 const PORT = 3000;
 
+// ✅ 修正：Renderでも動作しやすいパスに変更
+const logPath = path.join('/tmp', 'logs.json');
+
 app.use(cors());
 app.use(bodyParser.json());
-
-const logPath = path.join(__dirname, 'logs.json');
 
 // POST /log → ログを保存
 app.post('/log', (req, res) => {
   const { user_input, user_id } = req.body;
   const timestamp = new Date().toISOString();
-
   const logEntry = { user_input, user_id, timestamp };
 
   let logs = [];
@@ -32,7 +32,7 @@ app.post('/log', (req, res) => {
   res.status(200).json({ message: 'Logged and saved successfully' });
 });
 
-// ✅ GET /logs → ログ一覧を取得
+// GET /logs → ログ一覧を取得
 app.get('/logs', (req, res) => {
   if (!fs.existsSync(logPath)) {
     return res.status(200).json([]);
